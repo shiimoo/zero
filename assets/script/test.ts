@@ -1,11 +1,11 @@
 import { _decorator, Component, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { TimeCtrl } from './time/TimeCtrl';
+import { TimeMgr } from './time/TimerMgr';
 
 @ccclass('test')
 export class test extends Component {
-    private tc: TimeCtrl = new TimeCtrl();
+    private tc: TimeMgr = new TimeMgr();
     start() {
         console.log("test");
         this.tc.start();
