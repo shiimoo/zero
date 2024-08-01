@@ -8,7 +8,7 @@ export class test extends Component {
     private tc: TimeMgr = new TimeMgr();
     start() {
         console.log("test");
-        this.tc.start();
+        this.tc.createMsTimer();
     }
 
     update(deltaTime: number) {
