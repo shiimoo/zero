@@ -5,7 +5,7 @@
 import { AddSelf } from "../idgen/addSelf";
 import { Timer } from "./timer";
 import * as util from '../util'
-import { TIME } from '../constant/time';
+import { TIME_TIMER_TYPE } from '../constant/time';
 
 export class TimeMgr {
 
@@ -21,7 +21,7 @@ export class TimeMgr {
      * @param key 定时器归类标识
      * @param delayMs 延迟毫秒数
      */
-    startMsTimer(key: string, tType: TIME.TIME_TIMER_TYPE, delayMs: number, callback: (...params: any[]) => void, ...params: any[]) {
+    startMsTimer(key: string, tType: TIME_TIMER_TYPE, delayMs: number, callback: (...params: any[]) => void, ...params: any[]) {
         var tid = this.idGen.uuid()
         var timerObj = new Timer(tid, tType, delayMs, callback, ...params);
         this.addTimer(timerObj)
@@ -84,13 +84,13 @@ export class TimeMgr {
         }
 
         var nowDelayMs = timerObj.getExpiredTime() - Date.now()
-        if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
+        if (timerObj.getType() == TIME_TIMER_TYPE.ONCE) {
             timerObj.session = setTimeout(
                 this.trigerTimer.bind(this),
                 nowDelayMs,
                 timerObj.getId()
             );
-        } else if (timerObj.getType() == TIME.TIME_TIMER_TYPE.LOOP) {
+        } else if (timerObj.getType() == TIME_TIMER_TYPE.LOOP) {
             timerObj.session = setInterval(
                 this.trigerTimer.bind(this),
                 nowDelayMs,
@@ -105,9 +105,9 @@ export class TimeMgr {
      */
     private onCloseTimer(timerObj: Timer) {
         if (timerObj.session != null) {
-            if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
+            if (timerObj.getType() == TIME_TIMER_TYPE.ONCE) {
                 clearTimeout(timerObj.session)
-            } else if (timerObj.getType() == TIME.TIME_TIMER_TYPE.LOOP) {
+            } else if (timerObj.getType() == TIME_TIMER_TYPE.LOOP) {
                 clearInterval(timerObj.session)
             }
         }
@@ -126,7 +126,7 @@ export class TimeMgr {
         if (!res.isSucc()) {
             console.log("timer callback err", timerObj.getId(), res.err)
         }
-        if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
+        if (timerObj.getType() == TIME_TIMER_TYPE.ONCE) {
             this.delTimer(id)
         }
     }

@@ -19,7 +19,6 @@ export function SandBox(
     return res
 }
 
-
 class SandBoxResult {
     err: Error | null = null; // 运行结果错误信息,
     results: any = null; // 处理方法返回数据
