@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Label } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { TimeMgr } from './time/timerMgr';
@@ -7,11 +7,18 @@ import { TIME } from './constant/time';
 @ccclass('test')
 export class test extends Component {
     private tc: TimeMgr = new TimeMgr();
+    private count: number = 1;
+    @property(Label)
+    public label: Label = null;
+
+
     start() {
+        this.label.string
         console.log("test");
-        this.tc.createMsTimer("test", TIME.TIME_TIMER_TYPE.ONCE, 1000, (a, b, c, d, e, f) => {
-            console.log("a, b, c", a, b, c, d, e, f)
-        }, 1, 2, 3, 4, 5);
+        this.tc.startMsTimer("test", TIME.TIME_TIMER_TYPE.LOOP, 1000, () => {
+            this.label.string = this.count.toString()
+            this.count += 1
+        }, this.count);
     }
 
     update(deltaTime: number) {

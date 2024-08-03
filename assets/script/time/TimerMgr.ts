@@ -17,19 +17,26 @@ export class TimeMgr {
 
 
     /**
-     * @description 创建毫秒级定时器
+     * @description 开启毫秒级定时器
      * @param key 定时器归类标识
      * @param delayMs 延迟毫秒数
      */
-    createMsTimer(key: string, tType: TIME.TIME_TIMER_TYPE, delayMs: number, callback: (...params: any[]) => void, ...params: any[]) {
+    startMsTimer(key: string, tType: TIME.TIME_TIMER_TYPE, delayMs: number, callback: (...params: any[]) => void, ...params: any[]) {
         var tid = this.idGen.uuid()
         var timerObj = new Timer(tid, tType, delayMs, callback, ...params);
         this.addTimer(timerObj)
-        if (timerObj.getExpiredTime() <= Date.now()) {
-            this.trigerTimer(timerObj.getId())
-        } else {
-            this.startTimer(timerObj)
+    }
+
+    /**
+     * 关闭定时器
+     * @param id 定时器id
+     */
+    closeMsTimer(id: number) {
+        var timerObj = this.getTimer(id)
+        if (timerObj == null) {
+            return
         }
+        this.delTimer(id)
     }
 
     /**
@@ -37,7 +44,7 @@ export class TimeMgr {
      * @param id 定时器id
      * @returns Timer|null, null时即不存在
      */
-    getTimer(id: number): Timer | null {
+    private getTimer(id: number): Timer | null {
         if (this.timers.has(id)) {
             return this.timers.get(id)
         }
@@ -48,26 +55,34 @@ export class TimeMgr {
      * 添加定时器
      * @param Timer 定时器对象
      */
-    addTimer(timerObj: Timer) {
+    private addTimer(timerObj: Timer) {
         this.timers.set(timerObj.getId(), timerObj)
+        this.onStartTimer(timerObj)
     }
 
     /**
      * 删除定时器
      * @param id 定时器id
      */
-    delTimer(id: number) {
-        if (!this.timers.has(id)) {
+    private delTimer(id: number) {
+        var timerObj = this.getTimer(id)
+        if (timerObj == null) {
             return
         }
         this.timers.delete(id)
+        this.onCloseTimer(timerObj)
     }
 
     /**
      * 启动定时器
      * @param Timer 定时器对象
      */
-    startTimer(timerObj: Timer) {
+    private onStartTimer(timerObj: Timer) {
+        if (timerObj.getExpiredTime() <= Date.now()) {
+            this.trigerTimer(timerObj.getId())
+            return
+        }
+
         var nowDelayMs = timerObj.getExpiredTime() - Date.now()
         if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
             timerObj.session = setTimeout(
@@ -75,7 +90,7 @@ export class TimeMgr {
                 nowDelayMs,
                 timerObj.getId()
             );
-        } else {
+        } else if (timerObj.getType() == TIME.TIME_TIMER_TYPE.LOOP) {
             timerObj.session = setInterval(
                 this.trigerTimer.bind(this),
                 nowDelayMs,
@@ -84,20 +99,35 @@ export class TimeMgr {
         }
     }
 
-    // 销毁定时器
-    // closeTimer(timerObj: Timer) {
+    /**
+     * 关闭定时器
+     * @param Timer 定时器对象
+     */
+    private onCloseTimer(timerObj: Timer) {
+        if (timerObj.session != null) {
+            if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
+                clearTimeout(timerObj.session)
+            } else if (timerObj.getType() == TIME.TIME_TIMER_TYPE.LOOP) {
+                clearInterval(timerObj.session)
+            }
+        }
+    }
+
     /**
      * 触发定时器
      * @param id 定时器id
      */
-    trigerTimer(id: number) {
+    private trigerTimer(id: number) {
         var timerObj = this.getTimer(id)
         if (timerObj == null) {
             return
         }
         var res = util.SandBox(timerObj.callback, ...timerObj.callParams)
         if (!res.isSucc()) {
-            console.error("timer callback err", timerObj.getId(), res.err)
+            console.log("timer callback err", timerObj.getId(), res.err)
+        }
+        if (timerObj.getType() == TIME.TIME_TIMER_TYPE.ONCE) {
+            this.delTimer(id)
         }
     }
 }
