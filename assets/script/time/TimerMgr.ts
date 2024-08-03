@@ -2,8 +2,8 @@
  * @module TimeCtrl 定时器控制
  */
 
-import { AddSelf } from "../idgen/AddSelf";
-import { Timer } from "./Timer";
+import { AddSelf } from "../idgen/addSelf";
+import { Timer } from "./timer";
 
 export class TimeMgr {
 
@@ -13,19 +13,19 @@ export class TimeMgr {
     private idGen: AddSelf = new AddSelf(0);
 
     /**
-    * 定时器构造方法 todo 设置全部继承于基类 ctor
-    * @param delayMs 延时时间(毫秒)
-    */
-    constructor() {
-    }
-
-    // 创建定时器
-    createMsTimer() {
-        var timerObj = new Timer(this.idGen.uuid(), 1000, () => {
+     * @description 创建毫秒级定时器
+     * @param key 定时器归类标识
+     * @param delayMs 延迟毫秒数
+     */
+    createMsTimer(key:string, delayMs:number, callback:(...)=>void) {
+        var timerObj = new Timer(this.idGen.uuid(), key, delayMs, () => {
             console.log("timerObj start", timerObj.id)
-        }); // todo 默认1秒延时
-        console.log("createMsTimer", timerObj.id, timerObj.getCreateTime(), timerObj.getExpiredTime())
+        });
     }
     // 销毁定时器
     // 定时器检查
 }
+
+// 140.82.114.3 github.com
+// 185.199.108.153 assets-cdn.github.com
+// 199.232.69.194 github.global.ssl.fastly.net
