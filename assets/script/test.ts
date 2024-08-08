@@ -1,10 +1,13 @@
-import { _decorator, Component, Label } from 'cc';
+import { _decorator, Component, Label,log} from 'cc';
 const { ccclass, property } = _decorator;
 
 import { TimeMgr } from './time/timerMgr';
 import { EventMgr } from './event/eventMgr';
 import { TIME_TIMER_TYPE } from './constant/time';
 import { EVENT_NAME } from './constant/event';
+import { EDITOR } from 'cc/env';
+import { Logger } from './log/logger';
+import * as strings from './util/strings';
 
 @ccclass('test')
 export class test extends Component {
@@ -16,13 +19,13 @@ export class test extends Component {
 
 
     start() {
-        console.log("test");
-        this.em.registerListener(EVENT_NAME.onTest, this)
-        this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
-            this.label.string = this.count.toString()
-            this.count += 1
-            this.em.triggerEvent(EVENT_NAME.onTest, 3, 5, 6)
-        }, this.count);
+        Logger.info("test", Math.floor(1723113544113 / 1000))
+        // this.em.registerListener(EVENT_NAME.onTest, this)
+        // this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
+        //     this.label.string = this.count.toString()
+        //     this.count += 1
+        //     this.em.triggerEvent(EVENT_NAME.onTest, 3, 5, 6)
+        // }, this.count);
     }
 
     onTest(a, b, c) {
