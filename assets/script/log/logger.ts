@@ -23,7 +23,6 @@ export class Logger {
         var hour = strings.lengthFormatString(now.getHours().toString(), 2, true, "0")
         var min = strings.lengthFormatString(now.getMinutes().toString(), 2, true, "0")
         var sec = strings.lengthFormatString(now.getSeconds().toString(), 2, true, "0")
-        console.log("-", now.getUTCSeconds(), "-",now.getSeconds(), "-",now.getTimezoneOffset)
         return `${year}-${month}-${day} ${hour}:${min}:${sec}`
     }
     private static logLvToString(lv: LogLv): string {

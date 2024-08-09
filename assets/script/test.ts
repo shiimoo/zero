@@ -8,6 +8,7 @@ import { EVENT_NAME } from './constant/event';
 import { EDITOR } from 'cc/env';
 import { Logger } from './log/logger';
 import * as strings from './util/strings';
+import * as time from './util/time';
 
 @ccclass('test')
 export class test extends Component {
@@ -18,8 +19,8 @@ export class test extends Component {
     public label: Label = null;
 
 
-    start() {
-        Logger.info("test", Math.floor(1723113544113 / 1000))
+    start() {        
+        Logger.info("test", time.time.timeString(), time.time.timeString(1704038400))
         // this.em.registerListener(EVENT_NAME.onTest, this)
         // this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
         //     this.label.string = this.count.toString()
