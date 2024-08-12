@@ -20,7 +20,7 @@ export class test extends Component {
 
 
     start() {
-        Logger.info("test", time.hour())
+        Logger.info("test", time.timeString(time.weekZeroTime()))
         // this.em.registerListener(EVENT_NAME.onTest, this)
         // this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
         //     this.label.string = this.count.toString()

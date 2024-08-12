@@ -1,37 +1,37 @@
 
 
-import { Logger } from '../log/logger';
+import { nextPow2 } from 'cc';
 import * as strings from './strings';
 
 export namespace time {
-
     /**
      * 获取时间
      * @param timeSec 指定时间戳(秒)
      * @returns Date
      */
-    export function time(timeSec?: number): Date {
+    export function time(timeSec: number = 0): Date {
         var ti = new Date();
-        if (typeof timeSec == "number" && timeSec > 0) {
+        if (timeSec > 0) {
             ti.setTime(timeSec * 1000)
         }
         return ti
     }
+
     /**
      * 获取当前时间戳(s)
      * @returns 时间戳(秒)
      */
-    export function sec(now?: Date): number {
-        now = now || new Date();
-        return Math.floor(now.getTime() / 1000)
+    export function timeStamp(now?: Date): number {
+        return Math.floor(msTimeStamp(now) / 1000)
     }
 
     /**
      * 获取当前时间戳(ms)
      * @returns 时间戳(毫秒)
      */
-    export function ms(): number {
-        return Date.now()
+    export function msTimeStamp(now?: Date): number {
+        now = now || new Date();
+        return now.getTime();
     }
 
     /**
@@ -92,29 +92,24 @@ export namespace time {
     }
 
     /**
-     * 本月有多少天
-     * @param mon 指定月份[1,12]
-     * @returns  本月的第N天[28, 31]
+     * 今年的第N天
+     * @param now 指定时间
+     * @returns 今年的第N天[1, 366]
      */
-    export function monthMaxDay(mon?: number): number {
-        mon = mon || month()
-        var monthZeroTimeSec = 0 // todo 月0点时间
-        for (var lastDay of [31, 30, 29, 28]) {
-            var lastDayMonth = month(time(monthZeroTimeSec + lastDay * DAY_SECS - 1))
-            if (lastDayMonth = mon) {
-                return lastDay
-            }
-        }
+    export function yearDay(now?: Date) {
+        now = now || new Date();
+        return now.getDate()
     }
+
     /**
-     * 本年有多少天
-     * @param year 指定年份
-     * @returns 本年的第N天[385, 366]
+     * 今天周几[1,7]
+     * @param now 指定时间
+     * @returns 周N
      */
-    // export function yearMaxDay(year?: number): number {
-    // }
-    // 今年的第N天
-    // 今天周几
+    export function weekDay(now?: Date) {
+        now = now || new Date();
+        return now.getDay()
+    }
 
     /**
      * 今天的第N小时[0,23]
@@ -163,20 +158,53 @@ export namespace time {
      */
     export function dayZeroTime(now?: Date): Date {
         now = now || new Date();
-        return time(sec(now) - daySecond(now))
-    }
-    // 当周零点时间(周一)
-    // 当月0点时间(N月1日)
-    export function monthZeroTime(now?: Date): Date {
-        now = now || new Date();
-        var mDay = day(now)
-        return time(sec(now) - mDay * DAY_SECS)
+        return time(timeStamp(now) - daySecond(now))
     }
 
-    // 下月0点时间(N+1月1日)
-    // export function nextMonthZeroTime(now?: Date): Date {
-    // 设置月+1后计算
-    // }
+    /**
+     *  当周零点时间(周一)
+     * @param now 指定时间
+     * @returns Date
+     */
+    export function weekZeroTime(now?: Date): Date {
+        now = now || new Date();
+        var nowWeekDay = weekDay(now)
+        var dayDifff = nowWeekDay - 1
+        return dayZeroTime(time(timeStamp(now) - dayDifff * DAY_SECS))
+    }
+
+    /**
+     *  当月0点时间(N月1日)
+     * @param now 指定时间
+     * @returns Date
+     */
+    export function monthZeroTime(now?: Date): Date {
+        now = now || new Date();
+        var mDay = day(now) - 1
+        return dayZeroTime(time(timeStamp(now) - mDay * DAY_SECS))
+    }
+
+    /**
+     *  下月0点时间:即本月最后一天24点
+     * @param now 指定时间
+     * @returns Date
+     */
+    export function nextMonthZeroTime(now?: Date): Date {
+        now = now || new Date();
+        now.setMonth(month(now))
+        return monthZeroTime(now)
+    }
+
+    /**
+     *  当年0点时间(N月1日)
+     * @param now 指定时间
+     * @returns Date
+     */
+    export function yearZeroTime(now?: Date): Date {
+        now = now || new Date();
+        var mDay = day(now) - 1
+        return dayZeroTime(time(timeStamp(now) - mDay * DAY_SECS))
+    }
 
     // 时间标记(以时间基点为计算起点)
 
@@ -186,7 +214,7 @@ export namespace time {
      * @returns 第N分钟
      */
     export function minNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / MIN_SECS) + 1
     }
 
@@ -196,7 +224,7 @@ export namespace time {
      * @returns 第N个5分钟
      */
     export function fiveMinNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / (MIN_SECS * 5)) + 1
     }
 
@@ -206,7 +234,7 @@ export namespace time {
      * @returns 第N个15分钟(1刻钟)
      */
     export function quarterHourNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / (MIN_SECS * 15)) + 1
     }
 
@@ -216,7 +244,7 @@ export namespace time {
      * @returns 第N个30分钟(半小时)
      */
     export function halfHourNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / (MIN_SECS * 30)) + 1
     }
 
@@ -226,7 +254,7 @@ export namespace time {
      * @returns 第N个小时
      */
     export function hourNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / HOUR_SECS) + 1
     }
 
@@ -236,7 +264,7 @@ export namespace time {
      * @returns 第N天
      */
     export function dayNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / DAY_SECS) + 1
     }
 
@@ -246,24 +274,93 @@ export namespace time {
      * @returns 第N周
      */
     export function weekNo(now?: Date): number {
-        var diff = sec(now) - sec(baseSysTime)
+        var diff = timeStamp(now) - timeStamp(baseSysTime)
         return Math.floor(diff / WEEK_SECS) + 1
     }
-    // 月
+
+    /**
+     * 以起点为基准，当前时第N月
+     * @param now 指定时间, 不传时默认当前时间
+     * @returns 第N月 
+     */
     export function monthNo(now?: Date): number {
         now = now || new Date();
-        //-- todo
-        return 0
+        var yearDiff = year(now) - year(baseSysTime)
+        var monthDiff = month(now) - month(baseSysTime)        
+        return yearDiff * 12 + monthDiff + 1
     }
 
-    // 当前年数
 
     // 比较
-    // 同秒
-    // 同分钟
-    // 同小时
-    // 同天
-    // 同周
-    // 同月
-    // 同年
+
+    /**
+     * 是否同秒
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同秒
+     */
+    export function isSameSecond(t1:Date,t2:Date ):boolean{
+        return timeStamp(t1) == timeStamp(t2)
+
+    }
+
+    /**
+     * 是否同分钟
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同分钟
+     */
+    export function isSameMinute(t1:Date,t2:Date ):boolean{
+        return minNo(t1) == minNo(t2)
+    }
+
+    /**
+     * 是否同小时
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同小时
+     */  
+    export function isSameHour(t1:Date,t2:Date ):boolean{
+        return hourNo(t1) == hourNo(t2)
+    }
+    
+    /**
+     * 是否同天
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同天
+     */  
+    export function isSameDay(t1:Date,t2:Date ):boolean{
+        return dayNo(t1) == dayNo(t2)
+    }
+    
+    /**
+     * 是否同周
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同周
+     */  
+    export function isSameWeek(t1:Date,t2:Date ):boolean{
+        return weekNo(t1) == weekNo(t2)
+    }
+    
+    /**
+     * 是否同月
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同月
+     */  
+    export function isSameMonth(t1:Date,t2:Date ):boolean{
+        return monthNo(t1) == monthNo(t2)
+    }
+    
+    /**
+     * 是否同年
+     * @param t1 比较时间1
+     * @param t2 比较时间2
+     * @returns true:同年
+     */  
+    export function isSameYear(t1:Date,t2:Date ):boolean{
+        return year(t1) == year(t2)
+    }
 }
