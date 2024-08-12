@@ -1,7 +1,7 @@
 import { _decorator, Component, Label, log } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { TimeMgr } from './time/timerMgr';
+import { TimeMgr } from './timer/timerMgr';
 import { EventMgr } from './event/eventMgr';
 import { TIME_TIMER_TYPE } from './constant/time';
 import { EVENT_NAME } from './constant/event';
