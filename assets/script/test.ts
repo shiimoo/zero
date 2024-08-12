@@ -1,4 +1,4 @@
-import { _decorator, Component, Label,log} from 'cc';
+import { _decorator, Component, Label, log } from 'cc';
 const { ccclass, property } = _decorator;
 
 import { TimeMgr } from './time/timerMgr';
@@ -8,7 +8,7 @@ import { EVENT_NAME } from './constant/event';
 import { EDITOR } from 'cc/env';
 import { Logger } from './log/logger';
 import * as strings from './util/strings';
-import * as time from './util/time';
+import { time } from './util/time';
 
 @ccclass('test')
 export class test extends Component {
@@ -19,8 +19,8 @@ export class test extends Component {
     public label: Label = null;
 
 
-    start() {        
-        Logger.info("test", time.time.timeString(), time.time.timeString(1704038400))
+    start() {
+        Logger.info("test", time.timeString())
         // this.em.registerListener(EVENT_NAME.onTest, this)
         // this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
         //     this.label.string = this.count.toString()

@@ -26,11 +26,8 @@ export namespace time {
      * @param timeSec 指定时间戳(秒)
      * @returns "year-month-day hour:min:sec" e.g. "2024-07-08 13:39:53"
      */
-    export function timeString(timeSec?:number): string {
-        var now = new Date();
-        if (typeof timeSec == "number" ) {
-            now.setTime(timeSec*1000)
-        }
+    export function timeString(now?:Date): string {
+        now = now || new Date();
         var year = strings.lengthFormatString(now.getFullYear().toString(), 4, true, "0");
         var month = strings.lengthFormatString((now.getMonth()+1).toString(), 2, true, "0");
         var day = strings.lengthFormatString(now.getDate().toString(), 2, true, "0");
@@ -40,7 +37,24 @@ export namespace time {
         return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
     }
 
-    const startTime = new Date().setTime(1704038400)
-    // export function 
+    // 时间基点： 2024-01-01 00:00:00 (星期一)
+    export const baseSysTime = new Date().setTime(1704038400 * 1000)
+
+    // 时间标记(以时间基点为计算起点)
+
+    // 1 分钟
+    export function minNo(time?:Date) {
+        time = time || new Date();
+        console.log(time.toString())
+    }
+    // 5 分钟
+    // 15 分钟: 一刻
+    // 30 分钟: 半小时
+    // 小时
+    // 天
+    // 周
+    // 月
     
+    // 当前年数
+
 }
