@@ -1,9 +1,26 @@
-
-
-import { nextPow2 } from 'cc';
 import * as strings from './strings';
 
 export namespace time {
+
+    // 毫秒偏移量：该一辆用于时间对其
+    var msOffset: number = 0
+
+    /**
+     * 设置时间便宜
+     * @param ms 偏移量(毫秒)
+     */
+    export function setMsOffset(ms:number) {
+        msOffset = ms
+    }
+
+    /**
+     * 获取当前时间偏移量
+     * @returns 偏移量(毫秒)
+     */
+    export function getMsOffset() :number{
+        return msOffset
+    }
+
     /**
      * 获取时间
      * @param timeSec 指定时间戳(秒)
@@ -13,6 +30,9 @@ export namespace time {
         var ti = new Date();
         if (timeSec > 0) {
             ti.setTime(timeSec * 1000)
+        } else {
+            // 非指定时，进行时间偏移矫正
+            ti.setTime(ti.getTime() + msOffset)
         }
         return ti
     }
@@ -30,7 +50,7 @@ export namespace time {
      * @returns 时间戳(毫秒)
      */
     export function msTimeStamp(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getTime();
     }
 
@@ -40,7 +60,7 @@ export namespace time {
      * @returns "year-month-day hour:min:sec" e.g. "2024-07-08 13:39:53"
      */
     export function timeString(now?: Date): string {
-        now = now || new Date();
+        now = now || time();
         var year = strings.lengthFormatString(now.getFullYear().toString(), 4, true, "0");
         var month = strings.lengthFormatString((now.getMonth() + 1).toString(), 2, true, "0");
         var day = strings.lengthFormatString(now.getDate().toString(), 2, true, "0");
@@ -67,7 +87,7 @@ export namespace time {
      * @returns  第N年
      */
     export function year(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getFullYear()
     }
 
@@ -77,7 +97,7 @@ export namespace time {
      * @returns 第N月[1, 12]
      */
     export function month(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getMonth() + 1
     }
 
@@ -87,7 +107,7 @@ export namespace time {
      * @returns 本月的第N天[1, 31]
      */
     export function day(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getDate()
     }
 
@@ -97,7 +117,7 @@ export namespace time {
      * @returns 今年的第N天[1, 366]
      */
     export function yearDay(now?: Date) {
-        now = now || new Date();
+        now = now || time();
         return now.getDate()
     }
 
@@ -107,7 +127,7 @@ export namespace time {
      * @returns 周N
      */
     export function weekDay(now?: Date) {
-        now = now || new Date();
+        now = now || time();
         return now.getDay()
     }
 
@@ -117,7 +137,7 @@ export namespace time {
      * @returns 第N小时[0,23]
      */
     export function hour(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getHours()
     }
 
@@ -127,7 +147,7 @@ export namespace time {
      * @returns 第N分钟[0,59]
      */
     export function min(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getMinutes()
     }
 
@@ -137,7 +157,7 @@ export namespace time {
      * @returns 第N秒[0,59]
      */
     export function second(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return now.getSeconds()
     }
 
@@ -147,7 +167,7 @@ export namespace time {
      * @returns 第N秒[0,59]
      */
     export function daySecond(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         return hour(now) * HOUR_SECS + min(now) * MIN_SECS + second(now)
     }
 
@@ -157,7 +177,7 @@ export namespace time {
      * @returns Date
      */
     export function dayZeroTime(now?: Date): Date {
-        now = now || new Date();
+        now = now || time();
         return time(timeStamp(now) - daySecond(now))
     }
 
@@ -167,7 +187,7 @@ export namespace time {
      * @returns Date
      */
     export function weekZeroTime(now?: Date): Date {
-        now = now || new Date();
+        now = now || time();
         var nowWeekDay = weekDay(now)
         var dayDifff = nowWeekDay - 1
         return dayZeroTime(time(timeStamp(now) - dayDifff * DAY_SECS))
@@ -179,7 +199,7 @@ export namespace time {
      * @returns Date
      */
     export function monthZeroTime(now?: Date): Date {
-        now = now || new Date();
+        now = now || time();
         var mDay = day(now) - 1
         return dayZeroTime(time(timeStamp(now) - mDay * DAY_SECS))
     }
@@ -190,7 +210,7 @@ export namespace time {
      * @returns Date
      */
     export function nextMonthZeroTime(now?: Date): Date {
-        now = now || new Date();
+        now = now || time();
         now.setMonth(month(now))
         return monthZeroTime(now)
     }
@@ -201,7 +221,7 @@ export namespace time {
      * @returns Date
      */
     export function yearZeroTime(now?: Date): Date {
-        now = now || new Date();
+        now = now || time();
         var mDay = day(now) - 1
         return dayZeroTime(time(timeStamp(now) - mDay * DAY_SECS))
     }
@@ -284,9 +304,9 @@ export namespace time {
      * @returns 第N月 
      */
     export function monthNo(now?: Date): number {
-        now = now || new Date();
+        now = now || time();
         var yearDiff = year(now) - year(baseSysTime)
-        var monthDiff = month(now) - month(baseSysTime)        
+        var monthDiff = month(now) - month(baseSysTime)
         return yearDiff * 12 + monthDiff + 1
     }
 
@@ -299,7 +319,7 @@ export namespace time {
      * @param t2 比较时间2
      * @returns true:同秒
      */
-    export function isSameSecond(t1:Date,t2:Date ):boolean{
+    export function isSameSecond(t1: Date, t2: Date): boolean {
         return timeStamp(t1) == timeStamp(t2)
 
     }
@@ -310,7 +330,7 @@ export namespace time {
      * @param t2 比较时间2
      * @returns true:同分钟
      */
-    export function isSameMinute(t1:Date,t2:Date ):boolean{
+    export function isSameMinute(t1: Date, t2: Date): boolean {
         return minNo(t1) == minNo(t2)
     }
 
@@ -319,48 +339,48 @@ export namespace time {
      * @param t1 比较时间1
      * @param t2 比较时间2
      * @returns true:同小时
-     */  
-    export function isSameHour(t1:Date,t2:Date ):boolean{
+     */
+    export function isSameHour(t1: Date, t2: Date): boolean {
         return hourNo(t1) == hourNo(t2)
     }
-    
+
     /**
      * 是否同天
      * @param t1 比较时间1
      * @param t2 比较时间2
      * @returns true:同天
-     */  
-    export function isSameDay(t1:Date,t2:Date ):boolean{
+     */
+    export function isSameDay(t1: Date, t2: Date): boolean {
         return dayNo(t1) == dayNo(t2)
     }
-    
+
     /**
      * 是否同周
      * @param t1 比较时间1
      * @param t2 比较时间2
      * @returns true:同周
-     */  
-    export function isSameWeek(t1:Date,t2:Date ):boolean{
+     */
+    export function isSameWeek(t1: Date, t2: Date): boolean {
         return weekNo(t1) == weekNo(t2)
     }
-    
+
     /**
      * 是否同月
      * @param t1 比较时间1
      * @param t2 比较时间2
      * @returns true:同月
-     */  
-    export function isSameMonth(t1:Date,t2:Date ):boolean{
+     */
+    export function isSameMonth(t1: Date, t2: Date): boolean {
         return monthNo(t1) == monthNo(t2)
     }
-    
+
     /**
      * 是否同年
      * @param t1 比较时间1
      * @param t2 比较时间2
      * @returns true:同年
-     */  
-    export function isSameYear(t1:Date,t2:Date ):boolean{
+     */
+    export function isSameYear(t1: Date, t2: Date): boolean {
         return year(t1) == year(t2)
     }
 }
