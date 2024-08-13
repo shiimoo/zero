@@ -1,6 +1,6 @@
-import * as strings from './strings';
+import { util } from './util';
 
-export namespace time {
+export namespace UtilTime {
 
     // 毫秒偏移量：该一辆用于时间对其
     var msOffset: number = 0
@@ -9,7 +9,7 @@ export namespace time {
      * 设置时间便宜
      * @param ms 偏移量(毫秒)
      */
-    export function setMsOffset(ms:number) {
+    export function setMsOffset(ms: number) {
         msOffset = ms
     }
 
@@ -17,7 +17,7 @@ export namespace time {
      * 获取当前时间偏移量
      * @returns 偏移量(毫秒)
      */
-    export function getMsOffset() :number{
+    export function getMsOffset(): number {
         return msOffset
     }
 
@@ -61,12 +61,12 @@ export namespace time {
      */
     export function timeString(now?: Date): string {
         now = now || time();
-        var year = strings.lengthFormatString(now.getFullYear().toString(), 4, true, "0");
-        var month = strings.lengthFormatString((now.getMonth() + 1).toString(), 2, true, "0");
-        var day = strings.lengthFormatString(now.getDate().toString(), 2, true, "0");
-        var hour = strings.lengthFormatString(now.getHours().toString(), 2, true, "0");
-        var min = strings.lengthFormatString(now.getMinutes().toString(), 2, true, "0");
-        var sec = strings.lengthFormatString(now.getSeconds().toString(), 2, true, "0");
+        var year = util.strings.lengthFormatString(now.getFullYear().toString(), 4, true, "0");
+        var month = util.strings.lengthFormatString((now.getMonth() + 1).toString(), 2, true, "0");
+        var day = util.strings.lengthFormatString(now.getDate().toString(), 2, true, "0");
+        var hour = util.strings.lengthFormatString(now.getHours().toString(), 2, true, "0");
+        var min = util.strings.lengthFormatString(now.getMinutes().toString(), 2, true, "0");
+        var sec = util.strings.lengthFormatString(now.getSeconds().toString(), 2, true, "0");
         return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
     }
 

@@ -5,10 +5,9 @@ import { TimeMgr } from './timer/timerMgr';
 import { EventMgr } from './event/eventMgr';
 import { TIME_TIMER_TYPE } from './constant/time';
 import { EVENT_NAME } from './constant/event';
-import { EDITOR } from 'cc/env';
 import { Logger } from './log/logger';
 import * as strings from './util/strings';
-import { time } from './util/time';
+import { util } from './util/util';
 
 @ccclass('test')
 export class test extends Component {
@@ -18,9 +17,8 @@ export class test extends Component {
     @property(Label)
     public label: Label = null;
 
-
     start() {
-        Logger.info("test", time.timeString(time.weekZeroTime()))
+        Logger.info("test", util.time.timeString(util.time.weekZeroTime()))
         // this.em.registerListener(EVENT_NAME.onTest, this)
         // this.tc.startMsTimer("test", TIME_TIMER_TYPE.LOOP, 1000, () => {
         //     this.label.string = this.count.toString()

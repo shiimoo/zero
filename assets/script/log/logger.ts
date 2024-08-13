@@ -1,11 +1,9 @@
 
 
-import * as strings from '../util/strings';
-import { time } from '../util/time';
+import { util } from '../util/util';
 /**
  * logger 日志模块
  */
-
 
 enum LogLv {
     Fatal,  // 灾难：将导致程序退出，程序无法自行恢复
@@ -40,7 +38,8 @@ export class Logger {
 
     private static output(lv: LogLv, ...datas: unknown[]) {
         // 数据组装
-        console.log(`[${time.timeString()}] | ${Logger.logLvToString(lv)}: `, ...datas)
+        var outHandler = Logger.getOutFunc(lv)
+        outHandler(`[${util.time.timeString()}] | ${Logger.logLvToString(lv)}: `, ...datas)
     }
 
     static debug(...datas: unknown[]) {
@@ -61,4 +60,22 @@ export class Logger {
     static fatal(...datas: unknown[]) {
         Logger.output(LogLv.Fatal, ...datas)
     }
+    
+    private static getOutFunc(lv: LogLv):(...data: any[])=> void|null {
+       switch (lv) {
+           case LogLv.Fatal:
+               return console.trace;
+           case LogLv.Error:
+               return console.error;
+           case LogLv.Warn:
+               return console.warn;
+           case LogLv.Info:
+               return console.log;
+           case LogLv.Debug:
+               return console.debug;
+           default:
+            Logger.warn(`unknown LogLv:${lv}`)
+            return console.log
+       }
+   }
 }
