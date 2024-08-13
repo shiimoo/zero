@@ -1,13 +1,10 @@
 import { _decorator, Component, Label, log } from 'cc';
 const { ccclass, property } = _decorator;
 
-import { TimeMgr } from './timer/timerMgr';
-import { EventMgr } from './event/eventMgr';
-import { TIME_TIMER_TYPE } from './constant/time';
-import { EVENT_NAME } from './constant/event';
-import { Logger } from './log/logger';
-import * as strings from './util/strings';
-import { util } from './util/util';
+import { TimeMgr } from '../src/timer/timerMgr';
+import { EventMgr } from '../src/event/eventMgr';
+import { Logger } from '../src/log/logger';
+import { util } from '../src/util/util';
 
 @ccclass('test')
 export class test extends Component {

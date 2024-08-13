@@ -4,7 +4,7 @@
 
 import { AddSelf } from "../idgen/addSelf";
 import { Timer } from "./timer";
-import * as util from '../util'
+import * as util from '../../script/util'
 import { TIME_TIMER_TYPE } from '../constant/time';
 
 export class TimeMgr {

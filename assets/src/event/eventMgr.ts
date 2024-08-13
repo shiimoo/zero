@@ -3,7 +3,7 @@
  */
 
 import { EVENT_NAME } from '../constant/event';
-import { SandBox } from '../util';
+import { util } from '../util/util';
 
 export class EventMgr {
     private events: Map<EVENT_NAME, Map<Object, boolean>> = new Map<EVENT_NAME, Map<Object, boolean>>;
@@ -65,7 +65,7 @@ export class EventMgr {
         for (var listener of listeners.keys()) {
             var handler = listener[eventName]
             if (typeof handler == "function") {
-                var res = SandBox(handler.bind(listener), ...params)
+                var res = util.sandBox.SandBox(handler.bind(listener), ...params)
                 if (!res.isSucc()) {
                     // todo 日志
                     console.log("event err:", eventName, res.err)
