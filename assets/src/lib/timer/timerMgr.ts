@@ -2,9 +2,9 @@
  * @module TimeCtrl 定时器控制
  */
 
-import { AddSelf } from "../idgen/addSelf";
-import { Timer } from "./timer";
-import * as util from '../../script/util'
+import { AddSelf } from '../idgen/addSelf';
+import { Timer } from './timer';
+import { util } from '../util/util'
 import { TIME_TIMER_TYPE } from '../constant/time';
 
 export class TimeMgr {
@@ -122,7 +122,7 @@ export class TimeMgr {
         if (timerObj == null) {
             return
         }
-        var res = util.SandBox(timerObj.callback, ...timerObj.callParams)
+        var res = util.sandBox.SandBox(timerObj.callback, ...timerObj.callParams)
         if (!res.isSucc()) {
             console.log("timer callback err", timerObj.getId(), res.err)
         }
